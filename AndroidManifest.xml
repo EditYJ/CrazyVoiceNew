@@ -25,6 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+                 <activity
+            android:name="com.crazyvoice.activity.ChooseAreaActivity"
+            android:label="@string/title_activity_chooseareaactivity" >
+        </activity>
          <activity
             android:name="com.crazyvoice.activity.QuestionsList"
             android:label="@string/title_activity_questions_list" >

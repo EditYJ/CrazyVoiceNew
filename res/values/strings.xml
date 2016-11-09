@@ -11,6 +11,7 @@
     <string name="password">password</string>
     <string name="username">username@localhost</string>
     <string name="title_activity_questions_list">QuestionsList</string>
+    <string name="title_activity_chooseareaactivity">频道列表</string>
     <string name="title_activity_regist">regist</string>
     <string name="askQuestion">Ask Question</string>
     <string name="question_input">Please input your question!</string>

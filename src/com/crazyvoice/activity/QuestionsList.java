@@ -26,7 +26,11 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
+/**
+ * 研究创建房间和获取房间列表的类
+ * @author admin
+ *
+ */
 public class QuestionsList extends Activity {
 	public final static String ASK_QUESTION = "com.crazyvoice.activity.MESSAGE.ASK";
 	public final static String ANSWER_QUESTION = "com.crazyvoice.activity.MESSAGE.ANSWER";
@@ -38,30 +42,21 @@ public class QuestionsList extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		SmackAndroid.init(QuestionsList.this);
+		SmackAndroid.init(QuestionsList.this);// 初始化Asmack平台,必须的，否则会报错
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_questions_list);
 		rnameEditText = (EditText) findViewById(R.id.question_input);
 		questionsListView = (ListView) findViewById(R.id.questions);
 		try {
-
 			Collection<HostedRoom> rooms = MultiUserChat.getHostedRooms
-
-			(ClientConServer.connection, "conference."
-					+ ClientConServer.connection.getServiceName());
+					(ClientConServer.connection, "conference."+ ClientConServer.connection.getServiceName());
 			List<String> questions = new ArrayList<String>();
 			if (rooms != null && !rooms.isEmpty()) {
 				for (HostedRoom entry : rooms) {
 					RoomInfo info = MultiUserChat.getRoomInfo(
-							ClientConServer.connection,
-
-							entry.getJid());
+							ClientConServer.connection,entry.getJid());
 					questions.add(info.getDescription());
-					chatRoomMap.put(info.getDescription(), entry.getJid());// store
-																			// them
-																			// into
-																			// the
-																			// hashmap
+					chatRoomMap.put(info.getDescription(), entry.getJid());// store them in to the hash map
 				}
 			} else {
 				questions.add("There");
@@ -71,9 +66,7 @@ public class QuestionsList extends Activity {
 				questions.add("quesitons!");
 			}
 			// show them into the users
-			questionsListView.setAdapter(new ArrayAdapter<String>
-
-			(this, android.R.layout.simple_expandable_list_item_1, questions));
+			questionsListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, questions));
 			// add the listener to every question!
 			questionsListView.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> arg0, View arg1,
@@ -81,15 +74,12 @@ public class QuestionsList extends Activity {
 					String s = questionsListView.getItemAtPosition(arg2)
 							.toString();
 					Toast.makeText(getApplicationContext(),
-							"你选择了第" + arg2 + "个Item，itemTitle的值是：" + s,
-							Toast.LENGTH_SHORT).show();
-					Intent intent = new Intent(QuestionsList.this,
-							ChatRoom.class);
+							"你选择了第" + arg2 + "个Item，itemTitle的值是：" + s,Toast.LENGTH_SHORT).show();
+					Intent intent = new Intent(QuestionsList.this,ChatRoom.class);
 					intent.putExtra(ANSWER_QUESTION, chatRoomMap.get(s));
 					intent.putExtra(QUESTION, s);
 					startActivity(intent);
 				}
-
 			});
 		} catch (XMPPException e1) {
 			e1.printStackTrace();
@@ -105,8 +95,7 @@ public class QuestionsList extends Activity {
 						} else {
 							EditText editText = (EditText) findViewById(R.id.question_input);
 							String message = editText.getText().toString();
-							Intent intent = new Intent(QuestionsList.this,
-									ChatRoom.class);
+							Intent intent = new Intent(QuestionsList.this,ChatRoom.class);
 							if (chatRoomMap.containsKey(message)) {
 								Toast.makeText(
 										getApplicationContext(),
@@ -124,7 +113,6 @@ public class QuestionsList extends Activity {
 					}
 				});
 	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

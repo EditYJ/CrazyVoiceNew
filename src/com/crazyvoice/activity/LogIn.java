@@ -59,15 +59,11 @@ public class LogIn extends Activity implements OnClickListener {
 				ClientConServer ccs = new ClientConServer(LogIn.this);
 				loginResult = ccs.login(account, password);
 				if (loginResult) {
-					Toast.makeText(LogIn.this, "Sucessful", Toast.LENGTH_SHORT)
-							.show
-
-							();
+					Toast.makeText(LogIn.this, "Sucessful", Toast.LENGTH_SHORT).show();
 					Intent intent = new Intent(LogIn.this, QuestionsList.class);
 					startActivity(intent);
 				} else {
-					Toast.makeText(LogIn.this, "Fail", Toast.LENGTH_SHORT)
-							.show();
+					Toast.makeText(LogIn.this, "Fail", Toast.LENGTH_SHORT).show();
 				}
 			}
 		} else if (v.getId() == R.id.enter_regist_button) {// 注册按钮点击事件，跳转到注册页面
