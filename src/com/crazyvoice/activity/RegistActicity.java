@@ -62,10 +62,7 @@ public class RegistActicity extends Activity implements OnClickListener {
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					int restult = registServer.regist(reName.getText()
-							.toString().trim(),
-
-					rePwd.getText().toString().trim());
+					int restult = registServer.regist(reName.getText().toString().trim(),rePwd.getText().toString().trim());
 					if (restult == 1) {
 						registResult = "Success!";
 					} else {

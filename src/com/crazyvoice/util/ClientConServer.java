@@ -7,7 +7,11 @@ import org.jivesoftware.smack.packet.Presence;
 
 import android.content.Context;
 import android.os.StrictMode;
-
+/**
+ * 处理登录相关
+ * @author admin
+ *
+ */
 public class ClientConServer {
 	public static XMPPConnection connection;
 	private Context context;

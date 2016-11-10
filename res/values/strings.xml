@@ -19,5 +19,5 @@
     <string name="send_button">Send</string>
     <string name="regist_name">Enter your name</string>
     <string name="regist_pwd">Enter your password</string>
-
+	<string name="test_text">这是一个测试用例</string>
 </resources>

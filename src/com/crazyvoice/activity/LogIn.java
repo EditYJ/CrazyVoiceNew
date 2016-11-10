@@ -61,6 +61,7 @@ public class LogIn extends Activity implements OnClickListener {
 				if (loginResult) {
 					Toast.makeText(LogIn.this, "Sucessful", Toast.LENGTH_SHORT).show();
 					Intent intent = new Intent(LogIn.this, QuestionsList.class);
+					//Bundle bundle=new Bundle();
 					startActivity(intent);
 				} else {
 					Toast.makeText(LogIn.this, "Fail", Toast.LENGTH_SHORT).show();
