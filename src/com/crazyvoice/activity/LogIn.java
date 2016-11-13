@@ -7,6 +7,7 @@ import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
 import com.crazyvoice.app.R;
+import com.crazyvoice.test.queryServerRoomTest;
 import com.crazyvoice.util.ClientConServer;
 
 import android.app.Activity;
@@ -31,6 +32,7 @@ public class LogIn extends Activity implements OnClickListener {
 	private EditText passwordEditText;
 	private Button loginButton;
 	private Button registButton;
+	private Button testButton;
 	private boolean loginResult;
 
 	@Override
@@ -71,6 +73,10 @@ public class LogIn extends Activity implements OnClickListener {
 			Intent intent = new Intent();
 			intent.setClass(LogIn.this, RegistActicity.class);
 			startActivity(intent);
+		}else if(v.getId() == R.id.Test_button){
+			Intent intent = new Intent();
+			intent.setClass(LogIn.this, queryServerRoomTest.class);
+			startActivity(intent);
 		}
 	}
 
@@ -82,8 +88,10 @@ public class LogIn extends Activity implements OnClickListener {
 		passwordEditText = (EditText) findViewById(R.id.password);
 		loginButton = (Button) findViewById(R.id.login_button);
 		registButton = (Button) findViewById(R.id.enter_regist_button);
+		testButton=(Button) findViewById(R.id.Test_button);
 		loginButton.setOnClickListener(this);
 		registButton.setOnClickListener(this);
+		testButton.setOnClickListener(this);
 		SmackAndroid.init(LogIn.this);// 初始化Asmack平台,必须的，否则会报错
 	}
 
