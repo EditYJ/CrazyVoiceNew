@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.jivesoftware.smack.Connection;
 import org.jivesoftware.smack.SmackAndroid;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -17,13 +18,14 @@ import com.crazyvoice.util.InitServer;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.widget.TextView;
 
 public class queryServerRoomTest extends Activity {
-	public static String rom = "room: ";
 	public static TextView text;
-
+	private static final String TAG = "NetUitl01";
+	private static final String TAGT = "NetUitl02";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -31,29 +33,32 @@ public class queryServerRoomTest extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.test);
 		init();
+		initHostRoom();
+	}
+	private void initHostRoom() {
 		InitServer initServer=new InitServer();
-		Connection connection=initServer.connectServer();
+		XMPPConnection connection=initServer.connectServer();
+		Collection<HostedRoom> hostedrooms;
 		try {
 			connection.connect();
-			connection.login("yujie", "yujie726");
-			List<String> col = getConferenceServices(connection.getServiceName(), connection); 
-			Collection<HostedRoom> rooms = MultiUserChat.getHostedRooms(
-					connection,
-					connection.getServiceName());
-			if (rooms != null && !rooms.isEmpty()) {
-				for (HostedRoom entry : rooms) {
+			connection.login("user2", "passw0rd");
+			//获取会议服务，最后一个参数没有会议服务名
+			hostedrooms=MultiUserChat.getHostedRooms(connection, connection.getServiceName());
+			for(HostedRoom entry:hostedrooms){
+		        Log.i(TAG, "会议服务名字：" + entry.getName() + " - ID:" + entry.getJid()+"***"+connection.getServiceName());
+		        //获取会议服务中的房间，最后一个参数加上会议服务名，即完整的Jid
+		        Collection<HostedRoom> hostedrooms2=MultiUserChat.getHostedRooms(connection, entry.getJid());
+		        for(HostedRoom entry2:hostedrooms2){
 					RoomInfo info = MultiUserChat.getRoomInfo(
-							ClientConServer.connection, entry.getJid());
-					rom = rom + info.getDescription() + " ";
-				}
-				text.setText(rom);
+							connection,entry2.getJid());
+			        Log.i(TAGT, "房间名字：" + info.getRoom() + " - ID:" + entry2.getJid());
+		        }
 			}
 		} catch (XMPPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
 	private void init() {
 		// TODO Auto-generated method stub
 		TextView text = (TextView) findViewById(R.id.test_text);
