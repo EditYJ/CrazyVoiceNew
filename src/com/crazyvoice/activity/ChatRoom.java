@@ -36,7 +36,11 @@ import android.content.Intent;
 import android.content.MutableContextWrapper;
 import android.os.Build;
 import android.provider.ContactsContract.Contacts.Data;
-
+/**
+ * 消息获取研究
+ * @author admin
+ *
+ */
 public class ChatRoom extends Activity {
 	private final int RECIEVE = 1;
 	private MultiUserChat muc;

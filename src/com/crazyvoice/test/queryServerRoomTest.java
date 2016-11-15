@@ -21,7 +21,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.widget.TextView;
-
+/**
+ * 查询房间测试类
+ * @author yujie
+ *
+ */
 public class queryServerRoomTest extends Activity {
 	public static TextView text;
 	private static final String TAG = "NetUitl01";
@@ -52,6 +56,10 @@ public class queryServerRoomTest extends Activity {
 					RoomInfo info = MultiUserChat.getRoomInfo(
 							connection,entry2.getJid());
 			        Log.i(TAGT, "房间名字：" + info.getRoom() + " - ID:" + entry2.getJid());
+			        //加入房间部分的测试，加入房间需要获取房间Jid
+			        MultiUserChat e=new MultiUserChat(connection, entry2.getJid());
+			        e.join("加入成功");
+			        Log.v(TAGT, "join success"); 
 		        }
 			}
 		} catch (XMPPException e) {
