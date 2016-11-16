@@ -69,6 +69,7 @@ public class ChooseAreaActivity extends Activity {
 	private HashMap<String, String> chatRoomMap = new HashMap<String, String>();
 	private List<String> roomsList = new ArrayList<String>();
 	private XMPPConnection connection=ClientConServer.connection;
+	private MultiUserChat chat;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		SmackAndroid.init(ChooseAreaActivity.this);// 初始化Asmack平台,必须的，否则会报错
@@ -93,10 +94,23 @@ public class ChooseAreaActivity extends Activity {
 					queryChannel();
 				} else if (currentLevel == LEVEL_CHANNEL) {
 					selectChannel = channelList.get(index);
-					Log.d("ChooseAreaActivity", "读取频道信息");
+					Log.d("ChooseAreaActivity", selectChannel.getChannelName());
+					String roomName = DeleteBlank(selectChannel.getChannelName());
+					//查询房间是否房间已经创建，并保存房间信息.如果不存在则创建房间。
+					if(!queryRoom(roomName)){
+						creatRoom(roomName);
+						Log.d("ChooseAreaActivity", selectChannel.getChannelName()+"创建成功！！");
+					}else{
+						try {
+							chat.join("yj加入");
+							Log.d("ChooseAreaActivity", "yj加入成功！！");
+						} catch (XMPPException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 				}
 			}
-
 		});
 		queryCategory();
 	}
@@ -130,11 +144,12 @@ public class ChooseAreaActivity extends Activity {
 			dataList.clear();
 			showProgressDialog();
 			for (Channel channel : channelList) {
-				String roomName = DeleteBlank(channel.getChannelName());
-				  //查询房间是否房间已经创建，并保存房间信息.如果不存在则创建房间。
-				if(!queryRoom(roomName)){
-					creatRoom(roomName);
-				}
+				//想了一下这些创建房间的事可以在点击的时候执行，这样获取频道列表的延迟就会大大降低。
+//				String roomName = DeleteBlank(channel.getChannelName());
+				//查询房间是否房间已经创建，并保存房间信息.如果不存在则创建房间。
+//				if(!queryRoom(roomName)){
+//					creatRoom(roomName);
+//				}
 				dataList.add(channel.getChannelName());
 			}
 			closeProgressDialog();
@@ -154,8 +169,7 @@ public class ChooseAreaActivity extends Activity {
 	private void creatRoom(String channelName) {
 		// TODO Auto-generated method stub
 		try {
-			
-			MultiUserChat chat = new MultiUserChat(connection,
+			chat = new MultiUserChat(connection,
 					channelName+"@conference.gswtek-022");
 			chat.create(connection.getUser());
 			// 获取聊天室配置表单
