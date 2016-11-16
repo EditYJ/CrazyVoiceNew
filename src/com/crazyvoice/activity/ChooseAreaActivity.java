@@ -27,6 +27,7 @@ import com.crazyvoice.util.Utility;
 import android.R.string;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -100,15 +101,22 @@ public class ChooseAreaActivity extends Activity {
 					if(!queryRoom(roomName)){
 						creatRoom(roomName);
 						Log.d("ChooseAreaActivity", selectChannel.getChannelName()+"创建成功！！");
-					}else{
-						try {
-							chat.join("yj加入");
-							Log.d("ChooseAreaActivity", "yj加入成功！！");
-						} catch (XMPPException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
 					}
+					//else{
+//						try {
+//							chat = new MultiUserChat(connection,
+//									roomName+"@conference.gswtek-022");
+//							chat.join("yj加入");
+//							Log.d("ChooseAreaActivity", "yj加入成功！！");
+//							chat.sendMessage("我来啦！！！");
+//						} catch (XMPPException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//					}
+					Intent intent=new Intent(ChooseAreaActivity.this,ChatRoomActivity.class);
+					intent.putExtra("roomName", roomName);
+					startActivity(intent);
 				}
 			}
 		});
