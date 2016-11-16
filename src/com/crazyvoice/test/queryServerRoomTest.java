@@ -55,7 +55,7 @@ public class queryServerRoomTest extends Activity {
 		        for(HostedRoom entry2:hostedrooms2){
 					RoomInfo info = MultiUserChat.getRoomInfo(
 							connection,entry2.getJid());
-			        Log.i(TAGT, "房间名字：" + info.getRoom() + " - ID:" + entry2.getJid());
+			        Log.i(TAGT, "房间名字：" + info.getDescription() + " - ID:" + entry2.getJid());
 			        //加入房间部分的测试，加入房间需要获取房间Jid
 			        MultiUserChat e=new MultiUserChat(connection, entry2.getJid());
 			        e.join("加入成功");

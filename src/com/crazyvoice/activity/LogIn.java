@@ -64,7 +64,7 @@ public class LogIn extends Activity implements OnClickListener {
 				loginResult = ccs.login(account, password);
 				if (loginResult) {
 					Toast.makeText(LogIn.this, "Sucessful", Toast.LENGTH_SHORT).show();
-					Intent intent = new Intent(LogIn.this, QuestionsList.class);
+					Intent intent = new Intent(LogIn.this, ChooseAreaActivity.class);
 					//Bundle bundle=new Bundle();
 					startActivity(intent);
 				} else {

@@ -66,7 +66,8 @@ public class CreatServerRoomTest extends Activity {
 			}
 			// ////////////////////////////////////////////////////////////////////////////////////
 			/**
-			 * Spark会议室设置MUC: 房间名称 text-single muc#roomconfig_roomname 描述
+			 * Spark会议室设置MUC: 
+			 * 房间名称 text-single muc#roomconfig_roomname 描述
 			 * text-single muc#roomconfig_roomdesc 允许占有者更改主题 boolean
 			 * muc#roomconfig_changesubject 最大房间占有者人数 list-single
 			 * muc#roomconfig_maxusers 其 Presence是 Broadcast的角色 list-multi

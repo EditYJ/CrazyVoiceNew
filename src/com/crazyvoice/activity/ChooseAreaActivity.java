@@ -1,12 +1,25 @@
 package com.crazyvoice.activity;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+
+import org.jivesoftware.smack.SmackAndroid;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.muc.HostedRoom;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.RoomInfo;
 
 import com.crazyvoice.app.R;
 import com.crazyvoice.db.CrazyVoiceDB;
 import com.crazyvoice.model.Category;
 import com.crazyvoice.model.Channel;
+import com.crazyvoice.util.ClientConServer;
 import com.crazyvoice.util.HttpCallbackListener;
 import com.crazyvoice.util.HttpUtil;
 import com.crazyvoice.util.Utility;
@@ -52,9 +65,13 @@ public class ChooseAreaActivity extends Activity {
 	// 配置接口key和接口地址
 	public static final String KEY = "ae23e53fafb4207a70cf8bef18905c0e";
 	public static final String URL = "http://japi.juhe.cn/tv/";
-
+	//房间信息存储相关
+	private HashMap<String, String> chatRoomMap = new HashMap<String, String>();
+	private List<String> roomsList = new ArrayList<String>();
+	private XMPPConnection connection=ClientConServer.connection;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		SmackAndroid.init(ChooseAreaActivity.this);// 初始化Asmack平台,必须的，否则会报错
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -103,15 +120,24 @@ public class ChooseAreaActivity extends Activity {
 		}
 		currentLevel=LEVEL_CATEGORY;
 	}
-
+	/*
+	 * 查询频道分类下频道，优先从数据库查询，无则从服务器上查询。
+	 */
 	private void queryChannel() {
 		// TODO Auto-generated method stub
 		channelList = crazyVoiceDB.loadChannel(selectCategory.getId());
 		if (channelList.size() > 0) {
 			dataList.clear();
+			showProgressDialog();
 			for (Channel channel : channelList) {
+				String roomName = DeleteBlank(channel.getChannelName());
+				  //查询房间是否房间已经创建，并保存房间信息.如果不存在则创建房间。
+				if(!queryRoom(roomName)){
+					creatRoom(roomName);
+				}
 				dataList.add(channel.getChannelName());
 			}
+			closeProgressDialog();
 			adapter.notifyDataSetChanged();
 			listView.setSelection(0);
 			titleview.setText("选择频道");
@@ -120,7 +146,78 @@ public class ChooseAreaActivity extends Activity {
 		}
 		currentLevel=LEVEL_CHANNEL;
 	}
+	
+	/**
+	 * 根据频道名称创建聊天房间
+	 * @param channelName
+	 */
+	private void creatRoom(String channelName) {
+		// TODO Auto-generated method stub
+		try {
+			
+			MultiUserChat chat = new MultiUserChat(connection,
+					channelName+"@conference.gswtek-022");
+			chat.create(connection.getUser());
+			// 获取聊天室配置表单
+			Form form = chat.getConfigurationForm();
+			// 根据原始表单创建一个要提交的新表单
+			Form submitForm = form.createAnswerForm();
+			// /////////////////////////////////////////////////////////////////////////////////////
+			// 向提交的表单添加默认答复
+			for (Iterator<FormField> fields = form.getFields(); fields.hasNext();) {
+				FormField field = (FormField) fields.next();
+				if (!FormField.TYPE_HIDDEN.equals(field.getType())&& field.getVariable() != null) {
+					// 设置默认值作为答复
+					submitForm.setDefaultAnswer(field.getVariable());
+				}
+			}
+			// ////////////////////////////////////////////////////////////////////////////////////
+			submitForm.setAnswer("muc#roomconfig_roomdesc", channelName);//修改房间描述
+			submitForm.setAnswer("muc#roomconfig_persistentroom", true);//房间是持久的
+			submitForm.setAnswer("muc#roomconfig_enablelogging", true);//仅允许注册的昵称登录
+			// 发送已完成的表单到服务器配置聊天室
+			chat.sendConfigurationForm(submitForm);
+		} catch (XMPPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
+	/**
+	 * 查询房间是否房间已经创建，并保存房间信息
+	 * @param channelName
+	 */
+	private boolean queryRoom(String channelName) {
+		// TODO Auto-generated method stub
+		try {
+			Collection<HostedRoom> rooms=MultiUserChat.getHostedRooms(
+					connection, "conference."+connection.getServiceName());
+			if (rooms != null && !rooms.isEmpty()) {
+				for (HostedRoom entry : rooms) {
+					RoomInfo info = MultiUserChat.getRoomInfo(connection,entry.getJid());
+					roomsList.add(info.getDescription());
+					chatRoomMap.put(info.getRoom(), entry.getJid());
+				}
+				//判断房间名是否已经存在
+				if(roomsList.contains(channelName)){
+					return true;
+				}else{
+					return false;
+				}
+			}else{
+				return false;
+			}
+		} catch (XMPPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	/**
+	 * 从数据库查询频道分类和频道
+	 * @param code
+	 * @param type
+	 */
 	private void queryFromServer(final String code, final String type) {
 		// TODO Auto-generated method stub
 		String address = null;
@@ -206,6 +303,9 @@ public class ChooseAreaActivity extends Activity {
 		} else {
 			finish();
 		}
+	}
+	public String DeleteBlank(String name) {
+		return name.replace(" ", "");
 	}
 
 }

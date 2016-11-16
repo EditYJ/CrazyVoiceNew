@@ -48,7 +48,7 @@ public class ChatRoom extends Activity {
 	private TextView contentTextView;
 	private TextView titleTextView;
 	Handler handler;
-
+	//ÏûÏ¢¼àÌıÆ÷
 	class ChatPacketListener implements PacketListener {
 		private String _number;
 		private Date _lastDate;
