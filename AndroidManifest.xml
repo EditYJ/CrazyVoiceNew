@@ -16,7 +16,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@android:style/Theme.Holo.Light" >
         <activity
             android:name="com.crazyvoice.activity.LogIn"
             android:label="@string/app_name" >
@@ -28,7 +28,9 @@
         </activity>
         <activity
             android:name="com.crazyvoice.activity.ChooseAreaActivity"
-            android:label="@string/title_activity_chooseareaactivity" >
+            android:label="@string/title_activity_chooseareaactivity" 
+            android:logo="@drawable/logo_crazyvoice"
+            >
         </activity>
         <activity
             android:name="com.crazyvoice.activity.QuestionsList"
@@ -48,7 +50,8 @@
         </activity>
         <activity
             android:name="com.crazyvoice.activity.ChatRoomActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" 
+            android:logo="@drawable/logo_chat_room">
         </activity>
         <activity
             android:name="com.crazyvoice.activity.ChatRoom"

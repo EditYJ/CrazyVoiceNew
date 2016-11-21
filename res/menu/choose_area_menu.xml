@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/logo_zoom"
+        android:actionViewClass="android.widget.SearchView"
+        android:showAsAction="ifRoom|collapseActionView"
+        android:title="@string/action_search"/>
+    <item
+        android:id="@+id/action_me_direction"
+        android:icon="@drawable/logo_me"
+        android:showAsAction="always"
+        android:title="@string/action_me_direction"/>
+
+</menu>

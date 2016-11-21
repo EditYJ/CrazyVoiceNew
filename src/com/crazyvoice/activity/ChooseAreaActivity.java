@@ -25,11 +25,15 @@ import com.crazyvoice.util.HttpUtil;
 import com.crazyvoice.util.Utility;
 
 import android.R.string;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -46,7 +50,7 @@ public class ChooseAreaActivity extends Activity {
 	// 进程框
 	private ProgressDialog progressDialog;
 	// 界面
-	private TextView titleview;
+	//private TextView titleview;
 	private ListView listView;
 	// 数据库
 	private CrazyVoiceDB crazyVoiceDB;
@@ -76,10 +80,12 @@ public class ChooseAreaActivity extends Activity {
 		SmackAndroid.init(ChooseAreaActivity.this);// 初始化Asmack平台,必须的，否则会报错
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_out_right);//左右滑动效果
+		setBar();
+		//requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
 		listView = (ListView) findViewById(R.id.list_view);
-		titleview = (TextView) findViewById(R.id.title_text);
+		//titleview = (TextView) findViewById(R.id.title_text); 自己做的标题栏，准备启用action bar制作标题菜单栏
 		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, dataList);
 		listView.setAdapter(adapter);
@@ -122,8 +128,29 @@ public class ChooseAreaActivity extends Activity {
 		});
 		queryCategory();
 	}
-
-	/*
+	
+	/**
+	 * 设置标题菜单栏
+	 */
+	private void setBar() {
+		// TODO Auto-generated method stub
+		ActionBar bar=getActionBar();
+		bar.setDisplayHomeAsUpEnabled(true);
+	}
+	@Override//设置菜单栏按钮事件
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) { 
+		case android.R.id.home: 
+			if (currentLevel == LEVEL_CHANNEL) {
+				queryCategory();
+			} else {
+				finish();
+			}
+		}
+		return true;
+	}
+	/**
 	 * 查询所有频道分类，优先从数据库查询，无则从服务器上查询。
 	 */
 	private void queryCategory() {
@@ -136,7 +163,8 @@ public class ChooseAreaActivity extends Activity {
 			} 
 			adapter.notifyDataSetChanged();
 			listView.setSelection(0);
-			titleview.setText("选择频道分类");
+			setTitle("选择频道分类");
+			//titleview.setText("选择频道分类");
 		} else {
 			queryFromServer(null, "category");
 		}
@@ -163,7 +191,8 @@ public class ChooseAreaActivity extends Activity {
 			closeProgressDialog();
 			adapter.notifyDataSetChanged();
 			listView.setSelection(0);
-			titleview.setText("选择频道");
+			setTitle("选择频道");
+			//titleview.setText("选择频道");
 		} else {
 			queryFromServer(selectCategory.getCategoryCode(), "channel");
 		}
@@ -329,5 +358,11 @@ public class ChooseAreaActivity extends Activity {
 	public String DeleteBlank(String name) {
 		return name.replace(" ", "");
 	}
-
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		MenuInflater inflater = getMenuInflater(); 
+		inflater.inflate(R.menu.choose_area_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
 }

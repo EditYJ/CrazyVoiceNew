@@ -16,11 +16,13 @@ import com.crazyvoice.activity.ChatRoom.ChatPacketListener;
 import com.crazyvoice.app.R;
 import com.crazyvoice.util.ClientConServer;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.method.ScrollingMovementMethod;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -84,6 +86,8 @@ public class ChatRoomActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		SmackAndroid.init(ChatRoomActivity.this);
+		overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_out_right);//左右滑动效果
+		setBar();
 		setContentView(R.layout.activity_chat_room);
 		init();
 		handler=new Handler(){
@@ -107,7 +111,7 @@ public class ChatRoomActivity extends Activity {
 		Intent intent=getIntent();
 		String roomname=intent.getStringExtra("roomName");
 		titleTextView.setText(roomname);
-
+		setTitle(roomname);
 		try {
 			//DiscussionHistory()
 			//控制历史消息的类
@@ -143,6 +147,23 @@ public class ChatRoomActivity extends Activity {
 		}
 	}
 	
+	/**
+	 * 设置标题菜单栏
+	 */
+	private void setBar() {
+		// TODO Auto-generated method stub
+		ActionBar bar=getActionBar();
+		bar.setDisplayHomeAsUpEnabled(true);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case android.R.id.home: 
+			finish();
+		}
+		return true;
+	}
 	/*
 	 * 初始化部件
 	 */

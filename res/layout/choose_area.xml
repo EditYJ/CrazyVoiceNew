@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <RelativeLayout
+    <!-- <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#484e61" >
@@ -16,7 +16,7 @@
             android:layout_centerInParent="true"
             android:textColor="#fff"
             android:textSize="24sp" />
-    </RelativeLayout>
+    </RelativeLayout> 自己做的标题栏，准备启用action bar制作标题菜单栏-->
 
     <ListView
         android:id="@+id/list_view"
