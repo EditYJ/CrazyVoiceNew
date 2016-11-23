@@ -19,6 +19,7 @@ import com.crazyvoice.app.R;
 import com.crazyvoice.model.Msg;
 import com.crazyvoice.util.ClientConServer;
 import com.crazyvoice.util.MsgAdapter;
+import com.crazyvoice.util.wordFilter;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -26,6 +27,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -44,6 +46,8 @@ public class ChatRoomActivity extends Activity {
 	private MultiUserChat muc;
 	private EditText commentEditText;
 	private String name;
+	private List<String> fromList;
+	private List<String> nameList;
 	//private TextView contentTextView;
 	//private TextView titleTextView;
 	private Button sendButton;
@@ -107,17 +111,31 @@ public class ChatRoomActivity extends Activity {
 				// TODO Auto-generated method stub
 				switch (msg.what) {
 				case 1: {
-					String from = msg.getData().getString("from");
+					String from = "/"+msg.getData().getString("from");
 					String result = msg.getData().getString("body");
 					String date = msg.getData().getString("date");
-					//if(from!=name){
-						Msg msgContent=new Msg(result,  Msg.TYPE_RECEIVED);
+					//解析from
+					fromList=new wordFilter().cutstring(from);
+					//解析name
+					String nameMsg="/"+name;
+					nameList=new wordFilter().cutstring(nameMsg);
+					String userName=fromList.get(1);//from
+					String userNameS=nameList.get(0);//nameMsg
+					Log.d("data1", userName);
+					Log.d("data2", userNameS);
+					if(!userName.equals(userNameS)){
+						Msg msgContent=new Msg(result, Msg.TYPE_RECEIVED);
 						msgList.add(msgContent);
 						adapter.notifyDataSetChanged(); // 当有新消息时，刷新	ListView中的显示
 						msgListView.setSelection(msgList.size()); // 将ListView定位到最后一行
 //						contentTextView.setText(contentTextView.getText() + "\n"
 //								+ from + "    " + date + "\n" + result);
-					//}
+					}else if(userName.equals(userNameS)){
+						Msg msgContent=new Msg(result, Msg.TYPE_SENT);
+						msgList.add(msgContent);
+						adapter.notifyDataSetChanged(); // 当有新消息时，刷新	ListView中的显示
+						msgListView.setSelection(msgList.size()); // 将ListView定位到最后一行
+					}
 				}
 					break;
 				default:
@@ -150,9 +168,9 @@ public class ChatRoomActivity extends Activity {
 								if (!"".equals(comment)){
 									muc.sendMessage(comment);
 									Msg msg = new Msg(comment, Msg.TYPE_SENT);
-									msgList.add(msg);
-									adapter.notifyDataSetChanged(); // 当有新消息时，刷新ListView中的显示
-									msgListView.setSelection(msgList.size()); // 将ListView定位到最后一行
+//									msgList.add(msg);
+//									adapter.notifyDataSetChanged(); // 当有新消息时，刷新ListView中的显示
+//									msgListView.setSelection(msgList.size()); // 将ListView定位到最后一行
 									commentEditText.setText(null);
 								}
 							} catch (XMPPException e1) {
@@ -199,4 +217,5 @@ public class ChatRoomActivity extends Activity {
 		//titleTextView=(TextView) findViewById(R.id.room_name);
 		sendButton=(Button) findViewById(R.id.send);
 	}
+
 }
