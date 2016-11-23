@@ -11,6 +11,7 @@ import com.crazyvoice.test.CreatServerRoomTest;
 import com.crazyvoice.test.queryServerRoomTest;
 import com.crazyvoice.util.ClientConServer;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -50,7 +51,8 @@ public class LogIn extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		//requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setBar();
 		setContentView(R.layout.activity_login);
 		init();
 		initWatcher();
@@ -196,7 +198,15 @@ public class LogIn extends Activity implements OnClickListener {
 			}
 		};
 	}
-	
+	/**
+	 * …Ë÷√±ÍÃ‚≤Àµ•¿∏
+	 */
+	private void setBar() {
+		// TODO Auto-generated method stub
+		ActionBar bar = getActionBar();
+//		bar.setDisplayHomeAsUpEnabled(true);
+		setTitle("Õ¬≤€–««Ú-µ«¬º");
+	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

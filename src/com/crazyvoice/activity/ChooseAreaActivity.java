@@ -27,7 +27,9 @@ import com.crazyvoice.util.Utility;
 import android.R.string;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -50,7 +52,7 @@ public class ChooseAreaActivity extends Activity {
 	// 进程框
 	private ProgressDialog progressDialog;
 	// 界面
-	//private TextView titleview;
+	// private TextView titleview;
 	private ListView listView;
 	// 数据库
 	private CrazyVoiceDB crazyVoiceDB;
@@ -70,22 +72,25 @@ public class ChooseAreaActivity extends Activity {
 	// 配置接口key和接口地址
 	public static final String KEY = "ae23e53fafb4207a70cf8bef18905c0e";
 	public static final String URL = "http://japi.juhe.cn/tv/";
-	//房间信息存储相关
+	// 房间信息存储相关
 	private HashMap<String, String> chatRoomMap = new HashMap<String, String>();
 	private List<String> roomsList = new ArrayList<String>();
-	private XMPPConnection connection=ClientConServer.connection;
+	private XMPPConnection connection = ClientConServer.connection;
 	private MultiUserChat chat;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		SmackAndroid.init(ChooseAreaActivity.this);// 初始化Asmack平台,必须的，否则会报错
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		overridePendingTransition(android.R.anim.slide_in_left,android.R.anim.slide_out_right);//左右滑动效果
+		overridePendingTransition(android.R.anim.slide_in_left,
+				android.R.anim.slide_out_right);// 左右滑动效果
 		setBar();
-		//requestWindowFeature(Window.FEATURE_NO_TITLE);
+		// requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
 		listView = (ListView) findViewById(R.id.list_view);
-		//titleview = (TextView) findViewById(R.id.title_text); 自己做的标题栏，准备启用action bar制作标题菜单栏
+		// titleview = (TextView) findViewById(R.id.title_text);
+		// 自己做的标题栏，准备启用action bar制作标题菜单栏
 		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, dataList);
 		listView.setAdapter(adapter);
@@ -102,25 +107,28 @@ public class ChooseAreaActivity extends Activity {
 				} else if (currentLevel == LEVEL_CHANNEL) {
 					selectChannel = channelList.get(index);
 					Log.d("ChooseAreaActivity", selectChannel.getChannelName());
-					String roomName = DeleteBlank(selectChannel.getChannelName());
-					//查询房间是否房间已经创建，并保存房间信息.如果不存在则创建房间。
-					if(!queryRoom(roomName)){
+					String roomName = DeleteBlank(selectChannel
+							.getChannelName());
+					// 查询房间是否房间已经创建，并保存房间信息.如果不存在则创建房间。
+					if (!queryRoom(roomName)) {
 						creatRoom(roomName);
-						Log.d("ChooseAreaActivity", selectChannel.getChannelName()+"创建成功！！");
+						Log.d("ChooseAreaActivity",
+								selectChannel.getChannelName() + "创建成功！！");
 					}
-					//else{
-//						try {
-//							chat = new MultiUserChat(connection,
-//									roomName+"@conference.gswtek-022");
-//							chat.join("yj加入");
-//							Log.d("ChooseAreaActivity", "yj加入成功！！");
-//							chat.sendMessage("我来啦！！！");
-//						} catch (XMPPException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-//					}
-					Intent intent=new Intent(ChooseAreaActivity.this,ChatRoomActivity.class);
+					// else{
+					// try {
+					// chat = new MultiUserChat(connection,
+					// roomName+"@conference.gswtek-022");
+					// chat.join("yj加入");
+					// Log.d("ChooseAreaActivity", "yj加入成功！！");
+					// chat.sendMessage("我来啦！！！");
+					// } catch (XMPPException e) {
+					// // TODO Auto-generated catch block
+					// e.printStackTrace();
+					// }
+					// }
+					Intent intent = new Intent(ChooseAreaActivity.this,
+							ChatRoomActivity.class);
 					intent.putExtra("roomName", roomName);
 					startActivity(intent);
 				}
@@ -128,28 +136,51 @@ public class ChooseAreaActivity extends Activity {
 		});
 		queryCategory();
 	}
-	
+
 	/**
 	 * 设置标题菜单栏
 	 */
 	private void setBar() {
 		// TODO Auto-generated method stub
-		ActionBar bar=getActionBar();
+		ActionBar bar = getActionBar();
 		bar.setDisplayHomeAsUpEnabled(true);
 	}
-	@Override//设置菜单栏按钮事件
+
+	@Override
+	// 设置菜单栏按钮事件
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
-		switch (item.getItemId()) { 
-		case android.R.id.home: 
+		switch (item.getItemId()) {
+		case android.R.id.home:
 			if (currentLevel == LEVEL_CHANNEL) {
 				queryCategory();
 			} else {
-				finish();
+				new AlertDialog.Builder(ChooseAreaActivity.this)
+				// 设置对话框标题
+				.setTitle("系统提示")
+				// 设置显示的内容						
+				.setMessage("是否注销账号？")
+				// 添加确定按钮
+				.setPositiveButton("确定",new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog,int which) {// 确定按钮的响应事件
+						// TODO Auto-generated method stub
+						connection.disconnect();
+						finish();
+					}
+				})
+				.setNegativeButton("返回",new DialogInterface.OnClickListener() {// 添加返回按钮
+					@Override
+					public void onClick(DialogInterface dialog,int which) {// 响应事件
+						// TODO Auto-generated method stub
+						Log.i("alertdialog", " 请保存数据！");
+					}
+				}).show();// 在按键响应事件中显示此对话框
 			}
 		}
 		return true;
 	}
+
 	/**
 	 * 查询所有频道分类，优先从数据库查询，无则从服务器上查询。
 	 */
@@ -160,16 +191,17 @@ public class ChooseAreaActivity extends Activity {
 			dataList.clear();
 			for (Category category : categoryList) {
 				dataList.add(category.getCategoryName());
-			} 
+			}
 			adapter.notifyDataSetChanged();
 			listView.setSelection(0);
 			setTitle("选择频道分类");
-			//titleview.setText("选择频道分类");
+			// titleview.setText("选择频道分类");
 		} else {
 			queryFromServer(null, "category");
 		}
-		currentLevel=LEVEL_CATEGORY;
+		currentLevel = LEVEL_CATEGORY;
 	}
+
 	/*
 	 * 查询频道分类下频道，优先从数据库查询，无则从服务器上查询。
 	 */
@@ -180,34 +212,35 @@ public class ChooseAreaActivity extends Activity {
 			dataList.clear();
 			showProgressDialog();
 			for (Channel channel : channelList) {
-				//想了一下这些创建房间的事可以在点击的时候执行，这样获取频道列表的延迟就会大大降低。
-//				String roomName = DeleteBlank(channel.getChannelName());
-				//查询房间是否房间已经创建，并保存房间信息.如果不存在则创建房间。
-//				if(!queryRoom(roomName)){
-//					creatRoom(roomName);
-//				}
+				// 想了一下这些创建房间的事可以在点击的时候执行，这样获取频道列表的延迟就会大大降低。
+				// String roomName = DeleteBlank(channel.getChannelName());
+				// 查询房间是否房间已经创建，并保存房间信息.如果不存在则创建房间。
+				// if(!queryRoom(roomName)){
+				// creatRoom(roomName);
+				// }
 				dataList.add(channel.getChannelName());
 			}
 			closeProgressDialog();
 			adapter.notifyDataSetChanged();
 			listView.setSelection(0);
 			setTitle("选择频道");
-			//titleview.setText("选择频道");
+			// titleview.setText("选择频道");
 		} else {
 			queryFromServer(selectCategory.getCategoryCode(), "channel");
 		}
-		currentLevel=LEVEL_CHANNEL;
+		currentLevel = LEVEL_CHANNEL;
 	}
-	
+
 	/**
 	 * 根据频道名称创建聊天房间
+	 * 
 	 * @param channelName
 	 */
 	private void creatRoom(String channelName) {
 		// TODO Auto-generated method stub
 		try {
-			chat = new MultiUserChat(connection,
-					channelName+"@conference.gswtek-022");
+			chat = new MultiUserChat(connection, channelName
+					+ "@conference.gswtek-022");
 			chat.create(connection.getUser());
 			// 获取聊天室配置表单
 			Form form = chat.getConfigurationForm();
@@ -215,17 +248,19 @@ public class ChooseAreaActivity extends Activity {
 			Form submitForm = form.createAnswerForm();
 			// /////////////////////////////////////////////////////////////////////////////////////
 			// 向提交的表单添加默认答复
-			for (Iterator<FormField> fields = form.getFields(); fields.hasNext();) {
+			for (Iterator<FormField> fields = form.getFields(); fields
+					.hasNext();) {
 				FormField field = (FormField) fields.next();
-				if (!FormField.TYPE_HIDDEN.equals(field.getType())&& field.getVariable() != null) {
+				if (!FormField.TYPE_HIDDEN.equals(field.getType())
+						&& field.getVariable() != null) {
 					// 设置默认值作为答复
 					submitForm.setDefaultAnswer(field.getVariable());
 				}
 			}
 			// ////////////////////////////////////////////////////////////////////////////////////
-			submitForm.setAnswer("muc#roomconfig_roomdesc", channelName);//修改房间描述
-			submitForm.setAnswer("muc#roomconfig_persistentroom", true);//房间是持久的
-			submitForm.setAnswer("muc#roomconfig_enablelogging", true);//仅允许注册的昵称登录
+			submitForm.setAnswer("muc#roomconfig_roomdesc", channelName);// 修改房间描述
+			submitForm.setAnswer("muc#roomconfig_persistentroom", true);// 房间是持久的
+			submitForm.setAnswer("muc#roomconfig_enablelogging", true);// 仅允许注册的昵称登录
 			// 发送已完成的表单到服务器配置聊天室
 			chat.sendConfigurationForm(submitForm);
 		} catch (XMPPException e) {
@@ -236,26 +271,28 @@ public class ChooseAreaActivity extends Activity {
 
 	/**
 	 * 查询房间是否房间已经创建，并保存房间信息
+	 * 
 	 * @param channelName
 	 */
 	private boolean queryRoom(String channelName) {
 		// TODO Auto-generated method stub
 		try {
-			Collection<HostedRoom> rooms=MultiUserChat.getHostedRooms(
-					connection, "conference."+connection.getServiceName());
+			Collection<HostedRoom> rooms = MultiUserChat.getHostedRooms(
+					connection, "conference." + connection.getServiceName());
 			if (rooms != null && !rooms.isEmpty()) {
 				for (HostedRoom entry : rooms) {
-					RoomInfo info = MultiUserChat.getRoomInfo(connection,entry.getJid());
+					RoomInfo info = MultiUserChat.getRoomInfo(connection,
+							entry.getJid());
 					roomsList.add(info.getDescription());
 					chatRoomMap.put(info.getRoom(), entry.getJid());
 				}
-				//判断房间名是否已经存在
-				if(roomsList.contains(channelName)){
+				// 判断房间名是否已经存在
+				if (roomsList.contains(channelName)) {
 					return true;
-				}else{
+				} else {
 					return false;
 				}
-			}else{
+			} else {
 				return false;
 			}
 		} catch (XMPPException e) {
@@ -264,8 +301,10 @@ public class ChooseAreaActivity extends Activity {
 		}
 		return false;
 	}
+
 	/**
 	 * 从数据库查询频道分类和频道
+	 * 
 	 * @param code
 	 * @param type
 	 */
@@ -355,13 +394,15 @@ public class ChooseAreaActivity extends Activity {
 			finish();
 		}
 	}
+
 	public String DeleteBlank(String name) {
 		return name.replace(" ", "");
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
-		MenuInflater inflater = getMenuInflater(); 
+		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.choose_area_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
