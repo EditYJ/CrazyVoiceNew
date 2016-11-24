@@ -17,8 +17,10 @@ import org.jivesoftware.smackx.packet.DelayInformation;
 import com.crazyvoice.activity.ChatRoom.ChatPacketListener;
 import com.crazyvoice.app.R;
 import com.crazyvoice.model.Msg;
+import com.crazyvoice.model.Program;
 import com.crazyvoice.util.ClientConServer;
 import com.crazyvoice.util.MsgAdapter;
+import com.crazyvoice.util.Utility;
 import com.crazyvoice.util.wordFilter;
 
 import android.app.ActionBar;
@@ -41,6 +43,7 @@ import android.widget.TextView;
  *
  */
 public class ChatRoomActivity extends Activity {
+	private List<Program> programsList;	//节目列表
 	private final int RECIEVE = 1;
 	Handler handler;
 	private MultiUserChat muc;
@@ -145,8 +148,10 @@ public class ChatRoomActivity extends Activity {
 		};
 		Intent intent=getIntent();
 		String roomname=intent.getStringExtra("roomName");
+		//String ChannelCode=intent.getStringExtra("channelcode");
+		//programsList=ChooseAreaActivity.queryPrograme(ChannelCode);
 		//titleTextView.setText(roomname);
-		setTitle(roomname);
+		setTitle(roomname);//+"["+Utility.getNowPrograme(programsList)+"]");
 		try {
 			//DiscussionHistory()
 			//控制历史消息的类

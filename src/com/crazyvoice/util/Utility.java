@@ -1,6 +1,9 @@
 package com.crazyvoice.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -98,10 +101,9 @@ public class Utility {
 	}
 
 	/*
-	 * 处理节目信息
+	 * 处理节目信息,将当天播出的节目表存储到List<Program>以方便使用。
 	 */
-	public static boolean handleProgramResponse(CrazyVoiceDB crazyVoiceDB,
-			String reponse) {
+	public static boolean handleProgramResponse(String reponse) {
 		try {
 			JSONObject object = new JSONObject(reponse);
 			Log.d("CrazyVoice_Utility_Program", object.get("error_code") + ":"
@@ -141,9 +143,31 @@ public class Utility {
 	/*
 	 * 返回当前正在播放的节目
 	 */
-	public static String getNowPrograme(List<Program> programs){
-		
-		
-		return null;
+	public static String getNowPrograme(List<Program> programs) {
+		int id = 0;
+		for (int i = 0; i <= programs.size(); i++) {
+			String time = programs.get(i).getTime();
+			// 获取当前时间
+			SimpleDateFormat formate = new SimpleDateFormat(
+					"yyyy-MM-dd hh:mm");
+			Date NowDate = new Date(System.currentTimeMillis());
+			try {
+				Date ProStartTime =formate.parse(time);
+				if(NowDate.getTime()>ProStartTime.getTime()){
+					continue;
+				}else if(NowDate.getTime()<ProStartTime.getTime()){//若当前时间比节目播出时间小，则返回上一个节目在List中的位置
+					id=i-1;
+					break;
+				}else if(NowDate.getTime()==ProStartTime.getTime()){//若当前时间和节目播出时间相等，则返当前节目在List中的位置
+					id=i;
+					break;
+				}
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return programs.get(id).getpName();
 	}
+	
 }

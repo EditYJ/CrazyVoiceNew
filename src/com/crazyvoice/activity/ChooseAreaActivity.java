@@ -19,6 +19,7 @@ import com.crazyvoice.app.R;
 import com.crazyvoice.db.CrazyVoiceDB;
 import com.crazyvoice.model.Category;
 import com.crazyvoice.model.Channel;
+import com.crazyvoice.model.Program;
 import com.crazyvoice.util.ClientConServer;
 import com.crazyvoice.util.HttpCallbackListener;
 import com.crazyvoice.util.HttpUtil;
@@ -63,6 +64,7 @@ public class ChooseAreaActivity extends Activity {
 	private List<Category> categoryList;
 	// 频道列表
 	private List<Channel> channelList;
+
 	// 选中的频道分类
 	private Category selectCategory;
 	// 选中的频道
@@ -130,6 +132,7 @@ public class ChooseAreaActivity extends Activity {
 					Intent intent = new Intent(ChooseAreaActivity.this,
 							ChatRoomActivity.class);
 					intent.putExtra("roomName", roomName);
+					intent.putExtra("channelcode", selectChannel.getChannelCode());
 					startActivity(intent);
 				}
 			}
@@ -301,10 +304,32 @@ public class ChooseAreaActivity extends Activity {
 		}
 		return false;
 	}
-
+	
 	/**
-	 * 从数据库查询频道分类和频道
-	 * 
+	 * 从服务器根据电视频道查询该电视频道下面的电视节目List<Program>
+	 * @param code
+	 */
+	public static List<Program> queryPrograme(final String code){
+		String address=null;
+		address=URL+"getProgram?code="+code+"&date=&key="+KEY;
+		HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
+			
+			@Override
+			public void onFinish(String reponse) {
+				// TODO Auto-generated method stub
+				Utility.handleProgramResponse(reponse);
+			}
+			
+			@Override
+			public void onError(Exception e) {
+				// TODO Auto-generated method stub
+				Log.d("queryPrograme", "查询节目失败");
+			}
+		});
+		return Utility.programs;
+	}
+	/**
+	 * 从服务器查询频道分类和频道
 	 * @param code
 	 * @param type
 	 */
