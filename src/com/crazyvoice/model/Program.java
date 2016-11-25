@@ -1,10 +1,18 @@
 package com.crazyvoice.model;
 
 public class Program {
+	private int id;
 	private String cName;
 	private String pName;
 	private String pUrl;
 	private String time;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getcName() {
 		return cName;
 	}

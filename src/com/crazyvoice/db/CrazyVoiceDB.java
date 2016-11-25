@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.crazyvoice.model.Category;
 import com.crazyvoice.model.Channel;
+import com.crazyvoice.model.Program;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -97,4 +98,44 @@ public class CrazyVoiceDB {
 		
 	}
 	
+	/*
+	 * 将programe实例存入数据库
+	 */
+	public void savePrograme(Program program){
+		if(program!=null){
+			ContentValues values=new ContentValues();
+			values.put("cName", program.getcName());
+			values.put("pName", program.getpName());
+			values.put("pUrl", program.getpUrl());
+			values.put("time", program.getTime());
+			db.insert("Programe", null, values);
+		}
+	}
+	/*
+	 * 从数据库读取节目数据
+	 */
+	public List<Program> loadPrograme(String cName){
+		List<Program> list= new ArrayList<Program>();
+		Cursor cursor=db.query("Programe", null,  "cName = ?", new String[] { cName }, null, null, null);
+		if(cursor.moveToFirst()){
+			do{
+				Program program=new Program();
+				program.setcName(cursor.getString(cursor.getColumnIndex("cName")));
+				program.setpName(cursor.getString(cursor.getColumnIndex("pName")));
+				program.setpUrl(cursor.getString(cursor.getColumnIndex("pUrl")));
+				program.setTime(cursor.getString(cursor.getColumnIndex("time")));
+				program.setId(cursor.getInt(cursor.getColumnIndex("id")));
+				list.add(program);
+			}while(cursor.moveToNext());
+		}
+		return list;
+		
+	}
+	
+	/*
+	 * 删除某个表中所有数据
+	 */
+	public void deleteDate(String table){
+		 db.execSQL("delete from "+table);
+	}
 }

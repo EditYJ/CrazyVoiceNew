@@ -20,7 +20,11 @@ public class CrazyVoiceOpenHelper extends SQLiteOpenHelper {
 	public static final String CREATE_CHANNEL = "create table Channel("
 			+ "id integer primary key autoincrement, " + "channel_name text, "
 			+ "channel_code text, " + "category_id integer)";
-
+	
+	//电视节目表
+	public static final String CREATE_PROGRAME="create table Programe("
+			+ "id integer primary key autoincrement, " + "cName text, "
+			+ "pName text, " + "pUrl text, "+"time text)";
 	public CrazyVoiceOpenHelper(Context context, String name,
 			CursorFactory factory, int version) {
 		super(context, name, factory, version);
@@ -32,6 +36,7 @@ public class CrazyVoiceOpenHelper extends SQLiteOpenHelper {
 		// TODO Auto-generated method stub
 		db.execSQL(CREATE_CATEGORY); // 创建Category表
 		db.execSQL(CREATE_CHANNEL); // 创建Channel表
+		db.execSQL(CREATE_PROGRAME);//创建Programe表
 	}
 
 	@Override

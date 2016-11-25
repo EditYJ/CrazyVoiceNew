@@ -101,9 +101,9 @@ public class Utility {
 	}
 
 	/*
-	 * 处理节目信息,将当天播出的节目表存储到List<Program>以方便使用。
+	 * 处理节目信息.
 	 */
-	public static boolean handleProgramResponse(String reponse) {
+	public static boolean handleProgramResponse(CrazyVoiceDB crazyVoiceDB,String reponse) {
 		try {
 			JSONObject object = new JSONObject(reponse);
 			Log.d("CrazyVoice_Utility_Program", object.get("error_code") + ":"
@@ -123,7 +123,8 @@ public class Utility {
 					program.setpName(pName);
 					program.setpUrl(pUrl);
 					program.setTime(time);
-					programs.add(program);
+					//crazyVoiceDB.deleteDate("Programe");
+					crazyVoiceDB.savePrograme(program);
 				}
 				return true;
 			} else {
@@ -135,7 +136,6 @@ public class Utility {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return false;
 
 	}
@@ -167,6 +167,7 @@ public class Utility {
 				e.printStackTrace();
 			}
 		}
+		Log.d("正在播出：", programs.get(id).getpName());
 		return programs.get(id).getpName();
 	}
 	

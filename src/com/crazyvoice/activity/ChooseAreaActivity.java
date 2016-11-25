@@ -64,7 +64,8 @@ public class ChooseAreaActivity extends Activity {
 	private List<Category> categoryList;
 	// 频道列表
 	private List<Channel> channelList;
-
+	// 电视节目列表
+	private List<Program> programList;
 	// 选中的频道分类
 	private Category selectCategory;
 	// 选中的频道
@@ -132,7 +133,7 @@ public class ChooseAreaActivity extends Activity {
 					Intent intent = new Intent(ChooseAreaActivity.this,
 							ChatRoomActivity.class);
 					intent.putExtra("roomName", roomName);
-					intent.putExtra("channelcode", selectChannel.getChannelCode());
+					//intent.putExtra("channelcode", selectChannel.getChannelCode());
 					startActivity(intent);
 				}
 			}
@@ -215,13 +216,22 @@ public class ChooseAreaActivity extends Activity {
 			dataList.clear();
 			showProgressDialog();
 			for (Channel channel : channelList) {
+				/*
+				 * 查询频道下的电视节目，从服务器上查询。
+				 */
+				queryFromServer(channel.getChannelCode(), "programe");
+				String a=channel.getChannelCode();
+				programList=crazyVoiceDB.loadPrograme(channel.getChannelName());
+				Log.d("ChooseAreaActivity", Utility.getNowPrograme(programList));
+				dataList.add(channel.getChannelName()+"-["+Utility.getNowPrograme(programList)+"]");
+				crazyVoiceDB.deleteDate("Programe");
 				// 想了一下这些创建房间的事可以在点击的时候执行，这样获取频道列表的延迟就会大大降低。
 				// String roomName = DeleteBlank(channel.getChannelName());
 				// 查询房间是否房间已经创建，并保存房间信息.如果不存在则创建房间。
 				// if(!queryRoom(roomName)){
 				// creatRoom(roomName);
 				// }
-				dataList.add(channel.getChannelName());
+				//dataList.add(channel.getChannelName());
 			}
 			closeProgressDialog();
 			adapter.notifyDataSetChanged();
@@ -233,7 +243,17 @@ public class ChooseAreaActivity extends Activity {
 		}
 		currentLevel = LEVEL_CHANNEL;
 	}
-
+		
+	/**
+	 * 查询频道下的电视节目，优先从数据库查询，如果数据库中的节目日期其中一个比当前日期小或者无数据则从服务器上查询。
+	 */
+	private String queryPrograme() {
+		
+		return null;
+		
+		
+	}
+				
 	/**
 	 * 根据频道名称创建聊天房间
 	 * 
@@ -305,29 +325,29 @@ public class ChooseAreaActivity extends Activity {
 		return false;
 	}
 	
-	/**
-	 * 从服务器根据电视频道查询该电视频道下面的电视节目List<Program>
-	 * @param code
-	 */
-	public static List<Program> queryPrograme(final String code){
-		String address=null;
-		address=URL+"getProgram?code="+code+"&date=&key="+KEY;
-		HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
-			
-			@Override
-			public void onFinish(String reponse) {
-				// TODO Auto-generated method stub
-				Utility.handleProgramResponse(reponse);
-			}
-			
-			@Override
-			public void onError(Exception e) {
-				// TODO Auto-generated method stub
-				Log.d("queryPrograme", "查询节目失败");
-			}
-		});
-		return Utility.programs;
-	}
+//	/**
+//	 * 从服务器根据电视频道查询该电视频道下面的电视节目List<Program>
+//	 * @param code
+//	 */
+//	public static List<Program> queryPrograme(final String code){
+//		String address=null;
+//		address=URL+"getProgram?code="+code+"&date=&key="+KEY;
+//		HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
+//			
+//			@Override
+//			public void onFinish(String reponse) {
+//				// TODO Auto-generated method stub
+//				Utility.handleProgramResponse(reponse);
+//			}
+//			
+//			@Override
+//			public void onError(Exception e) {
+//				// TODO Auto-generated method stub
+//				Log.d("queryPrograme", "查询节目失败");
+//			}
+//		});
+//		return Utility.programs;
+//	}
 	/**
 	 * 从服务器查询频道分类和频道
 	 * @param code
@@ -340,10 +360,11 @@ public class ChooseAreaActivity extends Activity {
 			address = URL + "getCategory?key=" + KEY;
 		} else if ("channel".equals(type)) {
 			address = URL + "getChannel?pId=" + code + "&key=" + KEY;
+		}  else if ("programe".equals(type)) {
+			address = URL+"getProgram?code="+code+"&date=&key="+KEY;
 		}
 		showProgressDialog();
 		HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
-
 			@Override
 			public void onFinish(String reponse) {
 				// TODO Auto-generated method stub
@@ -353,6 +374,9 @@ public class ChooseAreaActivity extends Activity {
 							reponse);
 				} else if ("channel".equals(type)) {
 					result = Utility.handleChannelResponse(crazyVoiceDB,
+							reponse);
+				} else if ("programe".equals(type)) {
+					result = Utility.handleProgramResponse(crazyVoiceDB,
 							reponse);
 				}
 				if (result) {
