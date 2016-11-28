@@ -54,6 +54,10 @@
             android:logo="@drawable/logo_chat_room">
         </activity>
         <activity
+            android:name="com.crazyvoice.activity.MeActivity"
+            android:label="@string/action_me_direction" >
+        </activity>
+        <activity
             android:name="com.crazyvoice.activity.ChatRoom"
             android:label="@string/title_activity_chat_room"
             android:parentActivityName="QuestionsList" >
