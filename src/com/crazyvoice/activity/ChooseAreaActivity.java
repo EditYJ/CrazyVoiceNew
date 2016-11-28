@@ -216,15 +216,15 @@ public class ChooseAreaActivity extends Activity {
 			dataList.clear();
 			showProgressDialog();
 			for (Channel channel : channelList) {
-				/*
-				 * 查询频道下的电视节目，从服务器上查询。
-				 */
-				queryFromServer(channel.getChannelCode(), "programe");
-				String a=channel.getChannelCode();
-				programList=crazyVoiceDB.loadPrograme(channel.getChannelName());
-				Log.d("ChooseAreaActivity", Utility.getNowPrograme(programList));
-				dataList.add(channel.getChannelName()+"-["+Utility.getNowPrograme(programList)+"]");
-				crazyVoiceDB.deleteDate("Programe");
+//				/*
+//				 * 查询频道下的电视节目，从服务器上查询。
+//				 */
+				//queryFromServer(channel.getChannelCode(), "programe");
+				//String a=channel.getChannelCode();
+				//programList=crazyVoiceDB.loadPrograme(channel.getChannelName());
+				//Log.d("ChooseAreaActivity", Utility.getNowPrograme(programList));
+				dataList.add(channel.getChannelName());//+"-["+Utility.getNowPrograme(programList)+"]");
+				//crazyVoiceDB.deleteDate("Programe");
 				// 想了一下这些创建房间的事可以在点击的时候执行，这样获取频道列表的延迟就会大大降低。
 				// String roomName = DeleteBlank(channel.getChannelName());
 				// 查询房间是否房间已经创建，并保存房间信息.如果不存在则创建房间。
