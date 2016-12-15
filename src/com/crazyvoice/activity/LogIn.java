@@ -1,5 +1,6 @@
 package com.crazyvoice.activity;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import org.jivesoftware.smack.SmackAndroid;
@@ -7,9 +8,12 @@ import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
 import com.crazyvoice.app.R;
+import com.crazyvoice.db.CrazyVoiceDB;
+import com.crazyvoice.model.ServerInfor;
 import com.crazyvoice.test.CreatServerRoomTest;
 import com.crazyvoice.test.queryServerRoomTest;
 import com.crazyvoice.util.ClientConServer;
+import com.crazyvoice.util.SetServerInfor;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -24,36 +28,47 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /**
  * 登陆界面
  * 
- * @author admin
+ * @author yujie
  * 
  */
 public class LogIn extends Activity implements OnClickListener {
 	private EditText accountEditText;
 	private EditText passwordEditText;
+	private EditText serverIpEditText;
+	private EditText serverPortEditText;
+	private EditText serverNameEditText;
 	private Button loginButton;
 	private Button registButton;
 	private Button forgetPwdButton;
 	private Button userNameClear;
 	private Button pwdClear;
 	private Button pwsEye;
+	private Button clearServerInfor;
+	private Button enterServer;
+	private Button setServerInfor;
+	private RelativeLayout serverInforLayout;
 	//根据编辑框变化从而做出的动作
 	private TextWatcher username_watcher;
 	private TextWatcher password_watcher; 
 //	private Button testButton;
 //	private Button testButton2;
 	private boolean loginResult;
-
+	private ServerInfor serverInfor;
+//	private CrazyVoiceDB crazyVoiceDB;
+//	private SetServerInfor setServer=new SetServerInfor();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setBar();
 		setContentView(R.layout.activity_login);
+//		crazyVoiceDB = CrazyVoiceDB.getInstance(this);
 		init();
 		initWatcher();
 		accountEditText.addTextChangedListener(username_watcher);
@@ -108,6 +123,27 @@ public class LogIn extends Activity implements OnClickListener {
 			   }
 			passwordEditText.setSelection(passwordEditText.getText().toString().length());
 		}
+		//else if(v.getId()==R.id.button_set_serverinfor){
+//			serverInfor=crazyVoiceDB.loadServerInfo();
+//			//serverInfor=setServer.getServerInfor();
+//			serverIpEditText.setText(serverInfor.getServerIp());
+//			//你是不是在比如TextView的setText（）方法中向括号中填入了一个int类型的东西啊？
+//			//我刚刚也遇到了这个问题，一顿好找，终于发现了。
+//			//安卓对于数字很多时候当做资源的id而不仅仅是数字，比如这里的setText（）
+//			serverPortEditText.setText(serverInfor.getPort());
+//			serverNameEditText.setText(serverInfor.getServerName());
+//			serverInforLayout.setVisibility(View.VISIBLE);
+//		}else if(v.getId()==R.id.button_clear_server){
+//			serverIpEditText.setText(null);
+//			serverPortEditText.setText(null);
+//			serverNameEditText.setText(null);
+//		}else if(v.getId()==R.id.button_enter_server){
+//			serverInfor.setServerIp(serverIpEditText.getText().toString().trim());
+//			serverInfor.setPort(serverPortEditText.getText().toString().trim());
+//			serverInfor.setServerName(serverNameEditText.getText().toString().trim());
+//			crazyVoiceDB.saveServer(serverInfor);
+//			serverInforLayout.setVisibility(View.INVISIBLE);
+//		}
 //		else if(v.getId() == R.id.Test2_button){
 //			Intent intent = new Intent();
 //			intent.setClass(LogIn.this, CreatServerRoomTest.class);
@@ -128,16 +164,28 @@ public class LogIn extends Activity implements OnClickListener {
 		userNameClear=(Button) findViewById(R.id.button_username_clear);
 		pwdClear=(Button) findViewById(R.id.button_pwd_clear);
 		pwsEye=(Button) findViewById(R.id.button_pwd_eye);
+		serverIpEditText=(EditText) findViewById(R.id.edit_server_ip);
+		serverPortEditText=(EditText) findViewById(R.id.edit_server_port);
+		serverNameEditText=(EditText) findViewById(R.id.edit_server_name);
+		clearServerInfor=(Button) findViewById(R.id.button_clear_server);
+		enterServer=(Button) findViewById(R.id.button_enter_server);
+		setServerInfor=(Button) findViewById(R.id.button_set_serverinfor);
+		serverInforLayout=(RelativeLayout) findViewById(R.id.serverinfor_layout);
 //		testButton=(Button) findViewById(R.id.Test_button);
 //		testButton2=(Button) findViewById(R.id.Test2_button);
+
 		loginButton.setOnClickListener(this);
 		registButton.setOnClickListener(this);
 		forgetPwdButton.setOnClickListener(this);
 		userNameClear.setOnClickListener(this);
 		pwdClear.setOnClickListener(this);
 		pwsEye.setOnClickListener(this);
+		clearServerInfor.setOnClickListener(this);
+		enterServer.setOnClickListener(this);
+		setServerInfor.setOnClickListener(this);
 //		testButton.setOnClickListener(this);
 //		testButton2.setOnClickListener(this);
+
 		SmackAndroid.init(LogIn.this);// 初始化Asmack平台,必须的，否则会报错
 	}
 	

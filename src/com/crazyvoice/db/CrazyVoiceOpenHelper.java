@@ -10,7 +10,10 @@ public class CrazyVoiceOpenHelper extends SQLiteOpenHelper {
 	/*
 	 * 建表语句
 	 */
-
+//网络配置表
+	public static final String CREATE_SERVER = "create table Server("
+			+ "ip integer primary key , " + "port text, "
+			+ "name text)";
 	// 频道分类表
 	public static final String CREATE_CATEGORY = "create table Category("
 			+ "id integer primary key autoincrement, " + "category_name text, "
@@ -34,6 +37,7 @@ public class CrazyVoiceOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
+		db.execSQL(CREATE_SERVER);//创建Server表
 		db.execSQL(CREATE_CATEGORY); // 创建Category表
 		db.execSQL(CREATE_CHANNEL); // 创建Channel表
 		db.execSQL(CREATE_PROGRAME);//创建Programe表

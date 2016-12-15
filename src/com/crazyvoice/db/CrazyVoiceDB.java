@@ -6,6 +6,7 @@ import java.util.List;
 import com.crazyvoice.model.Category;
 import com.crazyvoice.model.Channel;
 import com.crazyvoice.model.Program;
+import com.crazyvoice.model.ServerInfor;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -39,7 +40,26 @@ public class CrazyVoiceDB {
 		return crazyVoiceDB;
 		}
 	
-	
+	/*
+	 * 将Server实例存入数据库
+	 */
+	public void saveServer(ServerInfor serverInfor){
+		if(serverInfor!=null){
+			ContentValues values=new ContentValues();
+			values.put("ip", serverInfor.getServerIp());
+			values.put("port", serverInfor.getPort());
+			values.put("name", serverInfor.getServerName());
+		}
+	}
+	public ServerInfor loadServerInfo(){
+		Cursor cursor=db.query("Category", null, null, null, null, null, null);
+		cursor.moveToLast();
+		ServerInfor serverInfor=new ServerInfor();
+		serverInfor.setServerIp(cursor.getString(cursor.getColumnIndex("ip")));
+		serverInfor.setPort(cursor.getString(cursor.getColumnIndex("port")));
+		serverInfor.setServerName(cursor.getString(cursor.getColumnIndex("name")));
+		return serverInfor;
+	}
 	/*
 	 * 将Category实例存入数据库
 	 */

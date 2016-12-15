@@ -10,12 +10,15 @@ import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Registration;
 
+import com.crazyvoice.model.ServerInfor;
+
 import android.content.Context;
 
 public class RegistServer {
 	public static XMPPConnection connection;
 	private Context context;
-
+	private ServerInfor serverInfor;
+	private SetServerInfor setServer=new SetServerInfor();
 	public RegistServer(Context context) {
 		this.context = context;
 	}
@@ -26,9 +29,10 @@ public class RegistServer {
 		InitServer initServer = new InitServer();
 		connection = initServer.connectServer();
 		try {
+			serverInfor=setServer.getServerInfor();
 			Registration registration = new Registration();
 			registration.setType(IQ.Type.SET);
-			registration.setTo("gswtek-022");
+			registration.setTo(serverInfor.getServerName());
 			registration.setUsername(name);
 			registration.setPassword(password);
 			registration.addAttribute("adroid", "yujie_RegistServer_android");

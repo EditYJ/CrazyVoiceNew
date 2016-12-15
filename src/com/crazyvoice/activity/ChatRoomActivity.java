@@ -1,5 +1,6 @@
 package com.crazyvoice.activity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,8 +19,10 @@ import com.crazyvoice.activity.ChatRoom.ChatPacketListener;
 import com.crazyvoice.app.R;
 import com.crazyvoice.model.Msg;
 import com.crazyvoice.model.Program;
+import com.crazyvoice.model.ServerInfor;
 import com.crazyvoice.util.ClientConServer;
 import com.crazyvoice.util.MsgAdapter;
+import com.crazyvoice.util.SetServerInfor;
 import com.crazyvoice.util.Utility;
 import com.crazyvoice.util.wordFilter;
 
@@ -43,6 +46,8 @@ import android.widget.TextView;
  *
  */
 public class ChatRoomActivity extends Activity {
+	private ServerInfor serverInfor;
+	private SetServerInfor setServer=new SetServerInfor();
 	private List<Program> programsList;	//节目列表
 	private final int RECIEVE = 1;
 	Handler handler;
@@ -153,12 +158,19 @@ public class ChatRoomActivity extends Activity {
 		//titleTextView.setText(roomname);
 		setTitle(roomname);//+"["+Utility.getNowPrograme(programsList)+"]");
 		try {
+			serverInfor=setServer.getServerInfor();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		try {
+			
 			//DiscussionHistory()
 			//控制历史消息的类
 			//The DiscussionHistory class controls the number of characters or messages to receive when entering a room
 			DiscussionHistory history = new DiscussionHistory();
 			history.setMaxStanzas(5);
-			muc=new MultiUserChat(ClientConServer.connection, roomname+"@conference.gswtek-022");
+			muc=new MultiUserChat(ClientConServer.connection, roomname+"@conference."+serverInfor.getServerName());
 			name = ClientConServer.connection.getUser();
 			//SmackConfiguration.getPacketReplyTimeout() 
 			//Returns the number of milliseconds to wait for a response from the server.
