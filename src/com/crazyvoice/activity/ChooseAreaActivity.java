@@ -1,5 +1,6 @@
 package com.crazyvoice.activity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,9 +21,11 @@ import com.crazyvoice.db.CrazyVoiceDB;
 import com.crazyvoice.model.Category;
 import com.crazyvoice.model.Channel;
 import com.crazyvoice.model.Program;
+import com.crazyvoice.model.ServerInfor;
 import com.crazyvoice.util.ClientConServer;
 import com.crazyvoice.util.HttpCallbackListener;
 import com.crazyvoice.util.HttpUtil;
+import com.crazyvoice.util.SetServerInfor;
 import com.crazyvoice.util.Utility;
 
 import android.R.string;
@@ -48,6 +51,8 @@ import android.widget.Toast;
 
 public class ChooseAreaActivity extends Activity {
 	// 设定等级
+	private ServerInfor serverInfor;
+	private SetServerInfor setServer=new SetServerInfor();
 	public static final int LEVEL_CATEGORY = 0;
 	public static final int LEVEL_CHANNEL = 1;
 	// 进程框
@@ -262,8 +267,14 @@ public class ChooseAreaActivity extends Activity {
 	private void creatRoom(String channelName) {
 		// TODO Auto-generated method stub
 		try {
+			serverInfor=setServer.getServerInfor();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
 			chat = new MultiUserChat(connection, channelName
-					+ "@conference.gswtek-022");
+					+ "@conference."+serverInfor.getServerName());
 			chat.create(connection.getUser());
 			// 获取聊天室配置表单
 			Form form = chat.getConfigurationForm();
